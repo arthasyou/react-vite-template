@@ -1,8 +1,7 @@
-// src/routes/index.tsx
 import { createBrowserRouter } from "react-router";
-import { authRoutes } from "./authRoutes";
+import { protectedRoutes } from "./protectedRoutes";
 import { publicRoutes } from "./publicRoutes";
 
-const router = createBrowserRouter([publicRoutes, authRoutes]);
+const router = createBrowserRouter([publicRoutes, protectedRoutes]);
 
 export default router;

@@ -1,8 +1,8 @@
 import App from "@/App";
-import Home from "@/pages/Home";
-import About from "@/pages/About";
+import Home from "@/pages/protected/Home";
+import About from "@/pages/protected/About";
 
-export const authRoutes = {
+export const protectedRoutes = {
   path: "/",
   element: <App />,
   children: [
