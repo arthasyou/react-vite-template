@@ -1,10 +1,10 @@
-import App from "@/App";
 import Home from "@/pages/protected/Home";
 import About from "@/pages/protected/About";
+import AppLayout from "@/layouts/AppLayout";
 
 export const protectedRoutes = {
   path: "/",
-  element: <App />,
+  element: <AppLayout />,
   children: [
     {
       index: true,
