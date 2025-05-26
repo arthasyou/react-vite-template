@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { loginApi } from "@/api"; // ✅ 引入你的 API 函数
+import { useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router";
+import { loginApi } from "@/api";
 import type { LoginRequest } from "@/models/authModel";
+import { loginSuccess } from "@/store/authSlice";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname ?? "/";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,10 +23,21 @@ export default function LoginPage() {
     };
 
     try {
-      const a = await loginApi(payload); // ✅ 发起登录请求
-      console.log("Login successful:", a);
+      const res = await loginApi(payload); // ✅ 发送请求
+      const token = res.access_token;
+      const user = res.user ?? { id: "1", name: username };
+
+      // ✅ 保存 token（可选）
+      localStorage.setItem("token", token);
+
+      // ✅ 写入 Redux
+      dispatch(loginSuccess({ token, user }));
+
+      // ✅ 跳转到原始路径或首页
+      navigate(from, { replace: true });
     } catch (err) {
       console.error("Login failed:", err);
+      alert("Login failed. Please check your credentials.");
     }
   };
 
