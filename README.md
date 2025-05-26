@@ -77,7 +77,3 @@ my-app/
 - `.env.production` — for production builds (`vite --mode production`)
 
 Environment variables are loaded automatically by Vite depending on the mode.
-
-```
-
-```
