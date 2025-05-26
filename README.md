@@ -26,12 +26,25 @@ pnpm dev
 
 ```
 my-app/
-├── public/
+├── public/ # Static public assets
 ├── src/
-│   ├── App.tsx
-│   └── main.tsx
-├── index.html
-├── vite.config.ts
-├── tsconfig.json
-└── .eslintrc.cjs
+│ ├── api/ # API modules (e.g., authApi, base)
+│ ├── assets/ # Static assets (e.g., icons, images)
+│ ├── components/ # Shared React components
+│ ├── i18n/ # i18n setup for localization
+│ ├── layouts/ # Layout components (AppLayout, AuthLayout)
+│ ├── models/ # Data models (e.g., authModel)
+│ ├── pages/
+│ │ ├── protected/ # Protected (authenticated) pages
+│ │ └── public/ # Public (unauthenticated) pages
+│ ├── routes/ # Route definitions (index, protected/public routes)
+│ ├── store/ # Global state management (e.g., Redux slices)
+│ ├── utils/ # Utility functions (e.g., httpClient)
+│ ├── index.css # Global styles
+│ ├── main.tsx # Application entry point
+│ └── vite-env.d.ts # Vite environment type declarations
+├── index.html # HTML entry point
+├── vite.config.ts # Vite configuration
+├── tsconfig.json # TypeScript configuration
+└── .eslintrc.cjs # ESLint configuration
 ```
