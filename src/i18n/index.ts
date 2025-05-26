@@ -10,7 +10,8 @@ i18n
   .init({
     fallbackLng: "en",
     debug: false,
-
+    ns: ["translation", "error"], // ✅ 命名空间列表
+    defaultNS: "translation", // ✅ 默认命名空间
     interpolation: {
       escapeValue: false,
     },
