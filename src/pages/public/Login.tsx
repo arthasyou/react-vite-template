@@ -1,20 +1,24 @@
-import { useNavigate } from "react-router";
 import { useState } from "react";
+import { loginApi } from "@/api"; // ✅ 引入你的 API 函数
+import type { LoginRequest } from "@/models/authModel";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 假设登录逻辑：用户名为 admin，密码为 1234
-    if (username === "admin" && password === "1234") {
-      localStorage.setItem("auth", "true"); // 简易存储登录状态
-      navigate("/"); // 登录成功跳转主页
-    } else {
-      alert("Invalid credentials");
+    const payload: LoginRequest = {
+      username,
+      password,
+    };
+
+    try {
+      const a = await loginApi(payload); // ✅ 发起登录请求
+      console.log("Login successful:", a);
+    } catch (err) {
+      console.error("Login failed:", err);
     }
   };
 

@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         "/api": {
-          target: env.VITE_API_PROXY, // ✅ 这里动态读取
+          target: env.VITE_API_PROXY,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
-          ws: true,
+          ws: false,
         },
       },
     },

@@ -6,7 +6,7 @@ export const loginApi = async (
 ): Promise<LoginResponse> => {
   const response = await request<LoginRequest, LoginResponse>({
     method: "POST",
-    url: "auth/login",
+    url: "/auth/login",
     body: payload,
   });
   return response;

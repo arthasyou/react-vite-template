@@ -2,7 +2,8 @@ import axios from "axios";
 
 // 创建 axios 实例
 const httpClient = axios.create({
-  baseURL: process.env.API_URL,
+  // baseURL: "/api", // 替换为实际的 API URL
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
