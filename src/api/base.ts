@@ -19,6 +19,9 @@ interface ErrorResponse {
   message: string;
 }
 
+/**
+ * Standard JSON request
+ */
 export async function request<T = unknown, R = unknown>({
   method,
   url,
@@ -45,16 +48,38 @@ export async function request<T = unknown, R = unknown>({
       data: ["POST", "PUT", "PATCH"].includes(method) ? body : undefined,
     });
 
-    return response.data.data; // ✅ 直接返回 data 字段
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  } catch (err: any) {
-    const error = err?.response?.data as ErrorResponse;
-
+    return response.data.data;
+  } catch (err: unknown) {
+    const error = (err as { response?: { data?: ErrorResponse } })?.response
+      ?.data as ErrorResponse;
     const message = getTranslatedError(error);
-
     showGlobalError(message);
     throw new Error(message);
   }
+}
+
+/**
+ * Streaming request: for LLM inference, SSE, etc.
+ */
+export function streamRequest<
+  T extends Record<string, unknown> = Record<string, unknown>
+>({
+  url,
+  body,
+  onChunk,
+  onDone,
+  onError,
+}: {
+  url: string;
+  body: T;
+  onChunk: (text: string) => void;
+  onDone?: () => void;
+  onError?: (err: Error) => void;
+}) {
+  httpClient.stream(url, body, onChunk, onDone, (err) => {
+    showGlobalError(err.message);
+    onError?.(err);
+  });
 }
 
 function getTranslatedError(error: ErrorResponse): string {
