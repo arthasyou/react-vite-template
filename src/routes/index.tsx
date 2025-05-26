@@ -4,4 +4,6 @@ import { publicRoutes } from "./publicRoutes";
 
 const router = createBrowserRouter([publicRoutes, protectedRoutes]);
 
-export default router;
+export { publicRoutes } from "./publicRoutes";
+export { protectedRoutes } from "./protectedRoutes";
+export { router };
