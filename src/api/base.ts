@@ -36,8 +36,12 @@ export async function request<T = unknown, R = unknown>({
     !Array.isArray(body)
   ) {
     const queryParams = new URLSearchParams(
-      body as Record<string, string>
+      Object.entries(body).reduce((acc, [k, v]) => {
+        if (v != null) acc[k] = String(v);
+        return acc;
+      }, {} as Record<string, string>)
     ).toString();
+
     finalUrl = `${url}?${queryParams}`;
   }
 
