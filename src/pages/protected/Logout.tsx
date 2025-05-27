@@ -11,6 +11,7 @@ export default function LogoutPage() {
     // 清除 Redux 和本地存储
     dispatch(logout());
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
 
     // 跳转回登录页
     navigate("/login", { replace: true });

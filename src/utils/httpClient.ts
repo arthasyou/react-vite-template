@@ -19,7 +19,7 @@ class HttpError extends Error {
 
 const httpClient = {
   /**
-   * nomrl JSON 请求
+   * nomrl request
    */
   async request<T>({
     url,
@@ -31,24 +31,14 @@ const httpClient = {
     const timer = setTimeout(() => controller.abort(), timeout);
 
     try {
-      const token = localStorage.getItem("token");
+      let res = await makeRequest({ url, method, data, controller });
 
-      const res = await fetch(BASE_URL + url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body:
-          method === "GET" || method === "DELETE"
-            ? undefined
-            : JSON.stringify(data),
-        signal: controller.signal,
-      });
+      if (res.status === 401 && (await tryRefreshToken())) {
+        res = await makeRequest({ url, method, data, controller });
+      }
 
       clearTimeout(timer);
-
-      const json = await res.json().catch(() => ({}));
+      const json = await safeJson(res);
 
       if (!res.ok) {
         throw new HttpError("HTTP error", {
@@ -74,32 +64,6 @@ const httpClient = {
     onDone?: () => void,
     onError?: (err: Error) => void
   ) {
-    const processBuffer = (
-      buffer: string,
-      onChunk: (chunk: string) => void,
-      onDone?: () => void
-    ): boolean => {
-      const lines = buffer.split("\n");
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed?.startsWith("data:")) continue;
-
-        const content = trimmed.replace(/^data:\s*/, "");
-        if (content === "[DONE]") {
-          onDone?.();
-          return true;
-        }
-
-        try {
-          const parsed = JSON.parse(content);
-          onChunk(parsed.text ?? content);
-        } catch {
-          onChunk(content);
-        }
-      }
-      return false;
-    };
-
     try {
       const token = localStorage.getItem("token");
 
@@ -120,7 +84,6 @@ const httpClient = {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
-
       let buffer = "";
 
       while (true) {
@@ -129,10 +92,7 @@ const httpClient = {
 
         buffer += decoder.decode(value, { stream: true });
 
-        if (processBuffer(buffer, onChunk, onDone)) {
-          return;
-        }
-
+        if (processBuffer(buffer, onChunk, onDone)) return;
         buffer = "";
       }
 
@@ -144,3 +104,98 @@ const httpClient = {
 };
 
 export default httpClient;
+
+function processBuffer(
+  buffer: string,
+  onChunk: (chunk: string) => void,
+  onDone?: () => void
+): boolean {
+  const lines = buffer.split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed?.startsWith("data:")) continue;
+
+    const content = trimmed.replace(/^data:\s*/, "");
+    if (content === "[DONE]") {
+      onDone?.();
+      return true;
+    }
+
+    try {
+      const parsed = JSON.parse(content);
+      onChunk(parsed.text ?? content);
+    } catch {
+      onChunk(content);
+    }
+  }
+  return false;
+}
+
+async function makeRequest({
+  url,
+  method,
+  data,
+  controller,
+}: {
+  url: string;
+  method: string;
+  data?: unknown;
+  controller: AbortController;
+}): Promise<Response> {
+  const token = localStorage.getItem("token");
+
+  return fetch(BASE_URL + url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body:
+      method === "GET" || method === "DELETE"
+        ? undefined
+        : JSON.stringify(data),
+    signal: controller.signal,
+  });
+}
+
+async function tryRefreshToken(): Promise<boolean> {
+  const refresh = localStorage.getItem("refreshToken");
+  if (!refresh) {
+    redirectToLogin("No refresh token");
+    return false;
+  }
+
+  const res = await fetch(`${BASE_URL}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh }),
+  });
+
+  if (res.ok) {
+    const newTokenData = await res.json();
+    const token = newTokenData.data?.access_token;
+    if (token) {
+      localStorage.setItem("token", token);
+      return true;
+    }
+  }
+
+  redirectToLogin("Refresh token expired");
+  return false;
+}
+
+function redirectToLogin(reason: string) {
+  console.warn("🔐 Redirecting to login:", reason);
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  window.location.href = "/login";
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+async function safeJson(res: Response): Promise<any> {
+  try {
+    return await res.json();
+  } catch {
+    return {};
+  }
+}

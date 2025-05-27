@@ -25,9 +25,11 @@ export default function LoginPage() {
     try {
       const res = await loginApi(payload); // ✅ 发送请求
       const token = res.accessToken;
+      const refreshToken = res.refresh;
 
       // ✅ 保存 token（可选）
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
 
       // ✅ 使用 token 请求用户信息
       const user = await getUserInfoApi(); // ⚠️ token 可以通过拦截器自动加上
