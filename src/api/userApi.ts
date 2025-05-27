@@ -1,10 +1,10 @@
 import { request } from "./base";
 import type { UserInfo } from "@/models/userModel";
 
-export const userInfoApi = async (): Promise<UserInfo> => {
+export const getUserInfoApi = async (): Promise<UserInfo> => {
   const response = await request<undefined, UserInfo>({
     method: "GET",
-    url: "/user/info",
+    url: "/user/get_info",
   });
   return response;
 };

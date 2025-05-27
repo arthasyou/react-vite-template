@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router";
-import { loginApi } from "@/api";
+import { getUserInfoApi, loginApi } from "@/api";
 import type { LoginRequest } from "@/models/authModel";
 import { loginSuccess } from "@/store/authSlice";
 
@@ -24,11 +24,13 @@ export default function LoginPage() {
 
     try {
       const res = await loginApi(payload); // ✅ 发送请求
-      const token = res.access_token;
-      const user = res.user ?? { id: "1", name: username };
+      const token = res.accessToken;
 
       // ✅ 保存 token（可选）
       localStorage.setItem("token", token);
+
+      // ✅ 使用 token 请求用户信息
+      const user = await getUserInfoApi(); // ⚠️ token 可以通过拦截器自动加上
 
       // ✅ 写入 Redux
       dispatch(loginSuccess({ token, user }));
@@ -37,7 +39,6 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err) {
       console.error("Login failed:", err);
-      alert("Login failed. Please check your credentials.");
     }
   };
 
