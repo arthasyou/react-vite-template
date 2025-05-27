@@ -32,8 +32,6 @@ export default function App() {
     const restore = async () => {
       try {
         const user = await getUserInfoApi();
-        // const user = { id: "local", name: "Guest" }; // 如果没有用户信息，使用默认值
-
         dispatch(loginSuccess({ token, user }));
       } catch (err) {
         console.warn("🔁 Failed to restore session:", err);
