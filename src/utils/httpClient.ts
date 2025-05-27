@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { resolveUrl, type UrlGroup } from "./url";
+
 const DEFAULT_TIMEOUT = 10000;
 
 interface FetchOptions extends RequestInit {
@@ -6,6 +7,7 @@ interface FetchOptions extends RequestInit {
   timeout?: number;
   url: string;
   method: string;
+  group?: UrlGroup;
 }
 
 class HttpError extends Error {
@@ -19,22 +21,23 @@ class HttpError extends Error {
 
 const httpClient = {
   /**
-   * nomrl request
+   * normal request
    */
   async request<T>({
     url,
     method,
     data,
     timeout = DEFAULT_TIMEOUT,
+    group = "api",
   }: FetchOptions): Promise<{ data: T }> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
 
     try {
-      let res = await makeRequest({ url, method, data, controller });
+      let res = await makeRequest({ url, method, data, controller, group });
 
       if (res.status === 401 && (await tryRefreshToken())) {
-        res = await makeRequest({ url, method, data, controller });
+        res = await makeRequest({ url, method, data, controller, group });
       }
 
       clearTimeout(timer);
@@ -67,7 +70,9 @@ const httpClient = {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(BASE_URL + url, {
+      const finalUrl = resolveUrl(url);
+
+      const res = await fetch(finalUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,15 +141,19 @@ async function makeRequest({
   method,
   data,
   controller,
+  group = "api",
 }: {
   url: string;
   method: string;
   data?: unknown;
   controller: AbortController;
+  group?: UrlGroup;
 }): Promise<Response> {
   const token = localStorage.getItem("token");
 
-  return fetch(BASE_URL + url, {
+  const finalUrl = resolveUrl(url, group);
+
+  return fetch(finalUrl, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -165,7 +174,9 @@ async function tryRefreshToken(): Promise<boolean> {
     return false;
   }
 
-  const res = await fetch(`${BASE_URL}/auth/refresh`, {
+  const finalUrl = resolveUrl("/auth/refresh", "auth");
+
+  const res = await fetch(finalUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh }),

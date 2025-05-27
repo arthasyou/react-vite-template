@@ -8,6 +8,7 @@ export const loginApi = async (
     method: "POST",
     url: "/auth/login",
     body: payload,
+    group: "auth",
   });
   return response;
 };

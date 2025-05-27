@@ -22,6 +22,18 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, ""),
           ws: false,
         },
+        "/auth": {
+          target: env.VITE_AUTH_PROXY,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/auth/, ""),
+          ws: false,
+        },
+        "/files": {
+          target: env.VITE_FILES_PROXY,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/files/, ""),
+          ws: false,
+        },
       },
     },
   };

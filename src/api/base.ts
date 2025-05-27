@@ -1,11 +1,13 @@
 import httpClient from "@/utils/httpClient";
 import { showGlobalError } from "@/components/GlobalErrorHandler";
 import i18n from "@/i18n";
+import type { UrlGroup } from "@/utils/url";
 
 interface RequestParams<T = Record<string, unknown>> {
   method: "GET" | "POST" | "PUT" | "DELETE";
   url: string;
   body?: T;
+  group?: UrlGroup;
 }
 
 interface SuccessResponse<T> {
@@ -26,6 +28,7 @@ export async function request<T = unknown, R = unknown>({
   method,
   url,
   body,
+  group = "api",
 }: RequestParams<T>): Promise<R> {
   let finalUrl = url;
 
@@ -50,6 +53,7 @@ export async function request<T = unknown, R = unknown>({
       method,
       url: finalUrl,
       data: ["POST", "PUT", "PATCH"].includes(method) ? body : undefined,
+      group,
     });
 
     return response.data.data;

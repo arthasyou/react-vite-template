@@ -24,8 +24,14 @@ Edit `.env.dev` as needed:
 
 ```env
 # For development (proxy to backend)
-VITE_API_PROXY=http://localhost:8000
+VITE_API_PROXY=http://localhost:8001
 VITE_API_URL=/api
+
+VITE_AUTH_PROXY=http://localhost:8002
+VITE_AUTH_URL=/auth
+
+VITE_FILE_PROXY=http://localhost:8003
+VITE_FILE_URL=/files
 ```
 
 Then run the dev server:
