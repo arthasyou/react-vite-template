@@ -83,3 +83,10 @@ my-app/
 - `.env.production` — for production builds (`vite --mode production`)
 
 Environment variables are loaded automatically by Vite depending on the mode.
+
+## 🔐 Authentication Backend
+
+The authentication backend for this template is powered by [auth-rs](https://github.com/arthasyou/auth-rs).  
+Please make sure to run `auth-rs` locally to enable login and user-related functionality.
+
+Default proxy setup assumes it's running at: `http://localhost:9876`
