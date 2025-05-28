@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router";
-import { getUserInfoApi, loginApi } from "@/api";
+import { meApi, loginApi } from "@/api";
 import type { LoginRequest } from "@/models/authModel";
 import { loginSuccess } from "@/store/authSlice";
 
@@ -32,7 +32,7 @@ export default function LoginPage() {
       localStorage.setItem("refreshToken", refreshToken);
 
       // ✅ 使用 token 请求用户信息
-      const user = await getUserInfoApi(); // ⚠️ token 可以通过拦截器自动加上
+      const user = await meApi(); // ⚠️ token 可以通过拦截器自动加上
 
       // ✅ 写入 Redux
       dispatch(loginSuccess({ token, user }));

@@ -5,7 +5,7 @@ import { loginSuccess } from "@/store/authSlice";
 import type { RootState } from "@/store";
 import { publicRoutes } from "@/routes/publicRoutes";
 import { protectedRoutes } from "@/routes/protectedRoutes";
-import { getUserInfoApi } from "./api";
+import { meApi } from "./api";
 
 export default function App() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);
@@ -31,7 +31,7 @@ export default function App() {
 
     const restore = async () => {
       try {
-        const user = await getUserInfoApi();
+        const user = await meApi();
         dispatch(loginSuccess({ token, user }));
       } catch (err) {
         console.warn("🔁 Failed to restore session:", err);

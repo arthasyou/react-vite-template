@@ -174,7 +174,7 @@ async function tryRefreshToken(): Promise<boolean> {
     return false;
   }
 
-  const finalUrl = resolveUrl("/auth/refresh", "auth");
+  const finalUrl = resolveUrl("/auth/refresh_token", "auth");
 
   const res = await fetch(finalUrl, {
     method: "POST",
