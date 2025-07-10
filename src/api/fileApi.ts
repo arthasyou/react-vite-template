@@ -17,8 +17,10 @@ export const uploadFileApi = async (
 	formData.append("file", file);
 	await upload(policy.url, formData);
 
+	const resolvedKey = policy.fields.key.replace("${filename}", filename);
+
 	// 拼接最终访问地址（默认直接拼接 key）
-	return `${policy.url}/${policy.fields.key}/${filename}`;
+	return `${policy.url}/${resolvedKey}`;
 };
 
 const getS3PolicyApi = async (): Promise<S3PolicyResponse> => {
