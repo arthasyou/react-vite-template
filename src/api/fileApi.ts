@@ -9,16 +9,16 @@ export const uploadFileApi = async (
 	const formData = new FormData();
 
 	// 填充 policy fields
-	for (const [key, value] of Object.entries(policy.data.fields)) {
+	for (const [key, value] of Object.entries(policy.fields)) {
 		formData.append(key, value);
 	}
 
 	// 添加文件字段
 	formData.append("file", file);
-	await upload(policy.data.url, formData);
+	await upload(policy.url, formData);
 
 	// 拼接最终访问地址（默认直接拼接 key）
-	return `${policy.data.url}/${policy.data.fields.key}/${filename}`;
+	return `${policy.url}/${policy.fields.key}/${filename}`;
 };
 
 const getS3PolicyApi = async (): Promise<S3PolicyResponse> => {

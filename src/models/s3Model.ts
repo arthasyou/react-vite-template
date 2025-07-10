@@ -8,8 +8,6 @@ export interface S3PolicyFields {
 }
 
 export interface S3PolicyResponse {
-	data: {
-		fields: S3PolicyFields;
-		url: string;
-	};
+	fields: S3PolicyFields;
+	url: string;
 }
