@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
 					ws: false,
 				},
 				"/file": {
-					target: env.VITE_FILES_PROXY,
+					target: env.VITE_FILE_PROXY,
 					changeOrigin: true,
 					rewrite: (path) => path.replace(/^\/file/, ""),
 					ws: false,
