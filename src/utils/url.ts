@@ -1,7 +1,7 @@
 const BASE_URLS: Record<string, string> = {
-  api: import.meta.env.VITE_API_URL,
-  auth: import.meta.env.VITE_AUTH_URL,
-  file: import.meta.env.VITE_FILE_URL,
+	api: import.meta.env.VITE_API_URL,
+	auth: import.meta.env.VITE_AUTH_URL,
+	file: import.meta.env.VITE_FILE_URL,
 };
 
 export type UrlGroup = keyof typeof BASE_URLS;
@@ -13,14 +13,14 @@ export type UrlGroup = keyof typeof BASE_URLS;
  * @returns 完整可用的请求 URL
  */
 export function resolveUrl(url: string, group: UrlGroup = "api"): string {
-  const isAbsolute = /^https?:\/\//.test(url);
+	const isAbsolute = /^https?:\/\//.test(url);
 
-  if (isAbsolute) return url;
+	if (isAbsolute) return url;
 
-  const base = BASE_URLS[group];
-  if (!base) {
-    throw new Error(`[resolveUrl] Unknown URL group: '${group}'`);
-  }
+	const base = BASE_URLS[group];
+	if (!base) {
+		throw new Error(`[resolveUrl] Unknown URL group: '${group}'`);
+	}
 
-  return base + url;
+	return base + url;
 }
