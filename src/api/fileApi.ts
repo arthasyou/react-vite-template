@@ -27,7 +27,7 @@ const getS3PolicyApi = async (): Promise<S3PolicyResponse> => {
 	const response = await request<undefined, S3PolicyResponse>({
 		method: "GET",
 		url: "/s3/policy",
-		group: "files",
+		group: "file",
 	});
 	return response;
 };
